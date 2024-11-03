@@ -237,9 +237,7 @@ const RootQueryType = new GraphQLObjectType({
       type: User,
       args: { id: { type: new GraphQLNonNull(UUIDType) } },
       resolve: async (_, { id }, ctx) => {
-        return await ctx.prisma.user.findUnique({
-          where: { id: id as string },
-        });
+        return await userLoader(ctx.prisma).load(id as string);
       },
     },
 

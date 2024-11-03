@@ -4,7 +4,7 @@ import { graphql, validate, parse } from 'graphql';
 import schema from './schema.js';
 import depthLimit from 'graphql-depth-limit';
 import { userLoader } from './loaders/userLoader.js';
-import { Context } from 'vm';
+import { Context } from 'node:vm';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
@@ -28,11 +28,11 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
           return { errors: errs, prisma };
         }
 
+        const loadUsers = userLoader(prisma);
+
         const contextValue: Context = {
           prisma,
-          loaders: {
-            userLoader: userLoader(prisma),
-          },
+          loadUsers,
         };
 
         const result = await graphql({
